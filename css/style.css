@@ -1,0 +1,203 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    font-family: courier, serif;
+}
+
+.customer-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+    margin-top: 2rem;
+}
+
+.customer-card input[type=number] {
+    width: 100%;
+    padding: 6px 10px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.customer-card__body {
+    flex: 1 1 auto;
+    padding: 1rem 1rem;
+}
+
+.customer-card__controls {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.customer-card button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 7px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.customer-card .calculateForm {
+    display: none;
+}
+
+.customer-header__navbar ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.customer-header__navbar ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.customer-header__navbar ul li a:hover, .customer-header__navbar ul li a.active {
+    background-color: #111;
+}
+
+.main-div {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 18rem);
+    justify-content: space-between;
+    column-gap: 2rem;
+    padding: 10px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination-wrapper button {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+.pagination-wrapper button.active {
+    background-color: lightblue;
+    color: white;
+}
+
+.pagination-wrapper button:hover:not(.active) {
+    background-color: #ddd;
+}
+.customers-registration__form form {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    width: 70%;
+    margin: auto;
+}
+.customers-registration__form input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.customers-registration__form input[type=submit] {
+    width: 50%;
+    background-color: #333;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 25%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.customers-registration__form .registration-validation ul li {
+    color:red;
+}
+
+.customer-header__features input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 100%;
+    background: #f1f1f1;
+}
+
+.modal {
+    display: none;      
+    position: fixed;    
+    z-index: 1;         
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+}
+.modal button {
+    
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 7px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+

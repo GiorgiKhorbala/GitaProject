@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="js/shared.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"  />
+    <title>Register New Customer</title>
+</head>
+<body>
+    <div class="customers-header">
+        <div class="customer-header__navbar">
+            <ul>
+                <li><a class="active" href="#">Add New Customer</a></li>
+                <li><a href="/Customers.html">Customers List</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="customers-registration__form">
+        <h3 style="text-align:center">Add New Customer</h3>
+        <form>
+            <div class="registration-validation" style="display:none;">
+                <ul>
+                </ul>
+            </div>
+            <label for="fname">First Name</label>
+            <input type="text" id="firstName" name="firstname" placeholder="First Name..">
+
+            <label for="lname">Last Name</label>
+            <input type="text" id="lastName" name="lastname" placeholder="Last Name..">
+
+            <label for="lname">Email</label>
+            <input type="text" id="email" name="email" placeholder="Email...">
+
+            <label for="lname">Phone Number</label>
+            <input type="text" id="phoneNumber" name="PhoneNumber" placeholder="Phone Number...">
+
+            <label for="customerType">Select Customer Type:</label>
+            <select id="customerType" name="CustomerType">
+                <option value="0">
+                    New
+                </option>
+                <option value="1">
+                    Loyal
+                </option>
+                <option value="2">
+                    Elite
+                </option>
+            </select>
+
+            <label for="img">Select Image:</label>
+            <input type="file" id="img" name="img" accept="image/*">
+
+
+            <input id="addNewCustomer" type="submit" value="ADD">
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            $('#addNewCustomer').click(function (e) {
+                e.preventDefault();
+
+                const url = urlBase + 'CreateCustomer';
+                const firstName = $('#firstName').val().trim();
+                const lastName = $('#lastName').val().trim();
+                const phoneNumber = $('#phoneNumber').val().trim();
+                const email = $('#email').val().trim();
+
+                const file = $('#img')[0] == 'undefined' ? null : $('#img')[0].files[0];
+                const category = $("#customerType").val();
+
+                let errorList = checkInputs(firstName, lastName, email, phoneNumber);
+                if (errorList.length > 0) {
+                    let errors = errorList.map(x => `<li>${x}</li>`);
+
+                    $('.registration-validation').show().find('ul').empty().append(errors);
+                    return;
+                }
+                $('.registration-validation').hide();
+                
+                const data = new FormData();
+                data.append("FirstName", firstName);
+                data.append("LastName", lastName);
+                data.append("Image", file);
+                data.append("CustomerType", category);
+                data.append("PhoneNumber", phoneNumber);
+                data.append("Email", email);
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        window.location.href = `/CustomerDetails.html?Id=${data.id}`;
+                    }
+
+                });
+
+            });
+
+        });</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="js/shared.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"  />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Customers List</title>
+</head>
+
+<body>
+    <div class="customers-header">
+        <div class="customer-header__navbar">
+            <ul>
+                <li><a href="/Register.html">Add New Customer</a></li>
+                <li><a class="active" href="#">Customers List</a></li>
+                <li class="customer-header__search"><a><i class="fa fa-search"></i></a></li>
+            </ul>
+        </div>
+        <div class="customer-header__features" style="display:none;">
+            <input type="text" class="customer-header__search-input" placeholder="Search.." name="search">
+        </div>
+    </div>
+
+    <div data-id="" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Do you realy want to delete this user?</p>
+            <div style="display:flex;justify-content:space-evenly;">
+                <button class="modal-no">No</button>
+                <button class="modal-ok" style="background-color:red;">Yes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-div"></div>
+
+    <div class="pagination-wrapper"></div>
+
+    <script>
+        let customersList = [];
+        
+
+        $('.modal-no,.close').click(function () {
+            $('.modal').attr('data-id', '').hide();
+        });
+
+        $('.modal-ok').click(function () {
+
+            const userId = $('.modal').attr('data-id');
+            const url = urlBase + 'DeleteCustomer' + '?id=' + userId;
+
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                success: function (data) {
+                    
+                    $('.main-div').html('');
+
+                    $('.close').click();
+
+                    customersList = customersList.filter(x => x.id != userId)
+                    state.querySet = customersList;
+
+                    DisplayCustomers();
+                    
+                }
+            });
+        });
+       
+        const state = {
+            'querySet': null,
+            'page': 1,
+            'rows': 12,
+            'window': 4,
+        }
+
+        function pagination(set, page, rows) {
+
+            let startPoint = (page - 1) * rows;
+            let endPoint = startPoint + rows;
+
+            let data = set.slice(startPoint, endPoint)
+            let pages = Math.ceil(set.length / rows);
+
+            return {
+                'set': data,
+                'pages': pages,
+            }
+        }
+
+        function PaginationBtns(pages) {
+
+            let wrapper = $('.pagination-wrapper').empty();
+
+            let maxLeft = (state.page - Math.floor(state.window / 2));
+            let maxRight = (state.page + Math.floor(state.window / 2));
+
+            if (maxLeft < 1) {
+                maxLeft = 1;
+                maxRight = state.window;
+            }
+
+            if (maxRight > pages) {
+                maxLeft = pages - (state.window - 1);
+
+                if (maxLeft < 1) {
+                    maxLeft = 1;
+                }
+                maxRight = pages;
+            }
+            
+            for (let page = maxLeft; page <= maxRight; page++) {
+
+                wrapper.append(`<button value=${page} class="page ${state.page == page ? 'active' : ''}">${page}</button>`);
+            }
+
+            if (state.page != 1) {
+                wrapper.html(`<button value=${1} class="page">&#171</button>` + wrapper.html());
+            }
+
+            if (state.page != pages) {
+                wrapper.append(`<button value=${pages} class="page">&#187;</button>`);
+            }
+
+            $('.page').on('click', function () {
+
+                $('.main-div').empty();
+
+                state.page = Number($(this).val())
+
+                DisplayCustomers();
+            })
+
+        }
+
+        function DisplayCustomers() {
+
+            let imageBase = urlBase + 'Images/';
+
+            let filteredData = pagination(state.querySet, state.page, state.rows);
+            let data = filteredData.set;
+
+            for (let i = 0; i < data.length; i++) {
+
+                let customerType = GetCustomerType(data[i].customerType);
+
+                let card = `
+                                <div data-id="${data[i].id}" class="card customer-card">
+                            <img class="card-img-top" style="height:20rem; object-fit: cover;" src="${imageBase + data[i].imageName}" alt="Img">
+                            <div class="customer-card__body ">
+                               <p class=" customer-card__titile"><b>Full Name :</b> ${data[i].firstName + " " + data[i].lastName}</p>
+                               <p class="customer-card__text"><b>Customer Type:</b> ${customerType}</p>
+                               <div class="customer-card__controls">
+                                  
+                                  <button style="background-color:#063970;" class="btn-delete">Delete</button>
+                                  <button style="background-color:#010e1b;" onclick="window.location.href = '/CustomerDetails.html?Id=${data[i].id}';">Details</button>
+
+                               </div>
+                            </div>
+                         </div>`;
+
+                $('.main-div').append(card);
+            }
+
+            $('.btn-delete').click(function () {
+                $('.modal').attr("data-id", $(this).parents("div.card").attr("data-id")).show();
+            });
+
+            PaginationBtns(filteredData.pages);
+        }
+
+        function GetUsers() {
+
+            const url = urlBase + 'Customers';
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                dataType:"json",
+            crossDomain: true,
+                contentType: "application/json",
+                success: function (data) {
+                    state.querySet = data;
+                    customersList = data;
+                    DisplayCustomers();
+                },
+                error: function () {
+                    console.log("Error Occured!");
+                }
+            });
+        }
+
+        $(document).ready(function () {
+
+            $('.customer-header__search').click(function () {
+                $('.customer-header__features').slideToggle();
+            });
+
+            $('.customer-header__search-input').keyup(function () {
+
+                let inputValue = $('.customer-header__search-input').val().trim().toLowerCase();
+                let set = [...customersList];
+                let filterResult = set.filter(x => (x.firstName.toLowerCase() + ' ' + x.lastName.toLowerCase()).includes(inputValue));
+
+                if (filterResult.length == 0) {
+                    $('.main-div').empty().append("No Data Found");
+                    $('.pagination-wrapper').empty();
+                    return;
+                }
+
+                state.querySet = filterResult;
+                state.page = 1;
+                $('.main-div').empty();
+                DisplayCustomers();
+            });
+            // window.open(urlBase,'_blank');
+
+            GetUsers();
+        });</script>
+
+</body>
+</html>
